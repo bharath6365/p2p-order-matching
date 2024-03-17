@@ -1,0 +1,7 @@
+version: "3.9"  # Adjust if you need a different version
+
+services:
+  redis:
+    image: redis:latest  # Uses the latest Redis image
+    ports:
+      - "6379:6379"

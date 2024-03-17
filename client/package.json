@@ -1,0 +1,16 @@
+{
+  "name": "client",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "grenache-nodejs-link": "^1.0.0",
+    "grenache-nodejs-ws": "^0.7.10",
+    "common": "file:../common"
+  }
+}
