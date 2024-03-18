@@ -71,7 +71,7 @@ const sendRequest = async () => {
     } catch(err: any) {
         console.error(err)
         if (err.message === 'ERR_GRAPE_LOOKUP_EMPTY') {
-            console.log('404....')
+            console.error('404 not found.')
             process.exit(0);
         }
 
