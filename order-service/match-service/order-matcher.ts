@@ -1,7 +1,7 @@
 
 
 import { publisher } from '../pubsub/publisher/bootup';
-import { port } from '../server/bootup';
+import { SERVICE_PORT } from '../server/bootup';
 import { executeOrder } from './order-executor'
 
 const {OrderStatus, CONSTANTS} = require('common');
@@ -54,7 +54,7 @@ const handleFullMatch = (orderBook: any, asset: string, buyOrder: any, sellOrder
             sellOrder,
             asset
         },
-        port: process.env.PORT,
+        port: SERVICE_PORT,
     }
     publisher.publish(CONSTANTS.ORDER_UPDATED, JSON.stringify(event));
 }
@@ -85,7 +85,7 @@ const handlePartialMatchWithExcessBuy = (orderBook: any, asset: string, buyOrder
             sellOrder,
             asset
         },
-        port: process.env.PORT,
+        port: SERVICE_PORT,
     }
     publisher.publish(CONSTANTS.ORDER_UPDATED, JSON.stringify(event));
 };
@@ -116,7 +116,7 @@ const handlePartialMatchWithExcessSell = (orderBook: any, asset: string, buyOrde
             sellOrder,
             asset
         },
-        port: process.env.PORT,
+        port: SERVICE_PORT,
     }
     publisher.publish(CONSTANTS.ORDER_UPDATED, JSON.stringify(event));
 }

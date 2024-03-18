@@ -10,8 +10,17 @@ export const orderCreateListener = (order: any, asset: string) => {
           SELL: []
       }
     }
+
+    // Check if it's an existing order. Additional layer of safety.
+    const existingOrder = orderBook[asset][type].find((existingOrder: any) => existingOrder.id === order.id);
+    if (existingOrder) {
+       return;
+    }
+
+  
   
     orderBook[asset][type].push(order);
+    sortOrdersByPrice(orderBook[asset][type]);
 
 }
 
@@ -28,20 +37,33 @@ export const orderMatchListener = (buyOrder: any, sellOrder: any, asset: string)
       const buyOrders = orderBook[asset].BUY;
       const sellOrders = orderBook[asset].SELL; 
   
-      // 2. Locate previous versions of the orders
-      const prevBuyOrder = buyOrders.find((order: any) => order.id === buyOrder.id);
-      const prevSellOrder = sellOrders.find((order: any) => order.id === sellOrder.id);
-  
-      // 3. Validation
-      if (!prevBuyOrder || !prevSellOrder) {
+      const buyOrderIndex = buyOrders.findIndex((order: any) => order.id === buyOrder.id);
+      const sellOrderIndex = sellOrders.findIndex((order: any) => order.id === sellOrder.id);
+
+    // Validation
+    if (buyOrderIndex === -1 || sellOrderIndex === -1) { 
         throw new Error('Order not found....');
-      }
+    } 
 
-  
+    const oldBuyOrder = buyOrders[buyOrderIndex];
+    const oldSellOrder = sellOrders[sellOrderIndex];
 
-  
-      // 5. Update in-memory orders
-      prevBuyOrder.status = OrderStatus.MATCHED;
-      prevSellOrder.status = OrderStatus.MATCHED;
+    // If the new order and old order, differ by more than 1 version, some update is missed. Handles double spending.
+    // TODO: Figure out a  better way to correct these orders. No time to think of this usecase.
+    if (buyOrder.version - oldBuyOrder.version > 1 || sellOrder.version - oldSellOrder.version > 1) {
+        oldBuyOrder.status = 'OUT_OF_SYNC';
+        oldSellOrder.status = 'OUT_OF_SYNC';
+
+        orderBook[asset].BUY[buyOrderIndex] = oldBuyOrder;
+        orderBook[asset].SELL[sellOrderIndex] = oldSellOrder;
+
+        return
+    }
+
+    // Persist
+    orderBook[asset].BUY[buyOrderIndex] = buyOrder;
+    orderBook[asset].SELL[sellOrderIndex] = sellOrder;
+
       
   }
+

@@ -4,6 +4,7 @@
 const redis = require('redis');
 const {CONSTANTS} = require('common')
 import {orderCreateListener, orderMatchListener} from '../../match-service/order-listener'
+import { SERVICE_PORT } from '../../server/bootup';
 
 export let subscriber;
 export const initializeSubscriber = async () => {
@@ -18,11 +19,11 @@ export const initializeSubscriber = async () => {
         const {buyerOrder, sellerOrder, asset}  = orderData
 
         // Dont listen to your own events.
-        // if (port === port) {
-        //   return;
-        // }
+        if (port === SERVICE_PORT) {
+          return;
+        }
 
-        // orderMatchListener(buyerOrder, sellerOrder, asset);
+        orderMatchListener(buyerOrder, sellerOrder, asset);
     } catch(err) {
        console.error('Error in order full match listener', err)
     }
@@ -35,12 +36,12 @@ export const initializeSubscriber = async () => {
         const payload = JSON.parse(payloadString);
         const {type,asset, port, orderData} = payload;
 
-        // Dont listen to your own events.
-        // if (port === port) {
-        //   return;
-        // }
+        //  Dont listen to your own events.
+        if (port === SERVICE_PORT) {
+          return;
+        }
 
-        // orderCreateListener(orderData, asset);
+        orderCreateListener(orderData, asset);
     } catch(err) {
        console.error('Error in order create listener', err)
     }

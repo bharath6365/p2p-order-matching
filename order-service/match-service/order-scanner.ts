@@ -40,7 +40,12 @@ const scanner = () => {
 }
 
 export const initializeOrderScanner = () => {
+    const scannerInterval = getRandomNumber(500, 1000)
     setInterval(() => {
         scanner();
     }, 500);
+}
+
+function getRandomNumber(low: number, high: number) {
+    return Math.floor(Math.random() * (high - low) + low)
 }

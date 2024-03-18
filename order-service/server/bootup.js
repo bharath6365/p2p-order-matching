@@ -1,7 +1,7 @@
 import Link  from 'grenache-nodejs-link'
 import { PeerRPCServer, PeerPub } from 'grenache-nodejs-ws'
 
-export let port;
+export let SERVICE_PORT;
 export const bootup = () => {
     const link = new Link({
         grape: 'http://127.0.0.1:30001'
@@ -11,11 +11,15 @@ export const bootup = () => {
 
       peer.init()
       const service = peer.transport('server')
-      port = 1337
-      service.listen(port) 
-      console.log('server listening on', port)
+      SERVICE_PORT = getRandomNumber(3000, 6000)
+      service.listen(SERVICE_PORT) 
+      console.log('server listening on', SERVICE_PORT)
 
       return {link, peer, service}
 
+}
+
+function getRandomNumber(low, high) {
+    return Math.floor(Math.random() * (high - low) + low)
 }
 

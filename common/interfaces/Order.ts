@@ -17,6 +17,8 @@ export enum OrderStatus {
     OPEN = 'OPEN',
     MATCHED = 'MATCHED',
     PARTIAL_MATCHED = 'PARTIAL_MATCHED',
+    // If the order is not in sync with the order book of other peers
+    OUT_OF_SYNC =  'OUT_OF_SYNC',
     CANCELED = 'CANCELED'
 }
 
