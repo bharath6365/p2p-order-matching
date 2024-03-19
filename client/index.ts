@@ -2,7 +2,8 @@
 
 const { PeerRPCClient }  = require('grenache-nodejs-ws')
 const Link = require('grenache-nodejs-link')
-const {CONSTANTS, OrderType, IOrder} = require('common')
+import {CONSTANTS, OrderType} from 'common'
+import type {IOrder}  from 'common'
 const {request} = require('./request')
 
 const link = new Link({
@@ -17,13 +18,13 @@ peer.init()
 
 // buyer price >= seller price Sale should happen.
 
-const orders = [
+const orders: Array<Partial<IOrder>> = [
     { 
         asset: 'BTC',
         price: 100,
         quantity: 5,
         type: OrderType.BUY,
-        userId: '1'
+        userId: '1',
     },
     { 
         asset: 'BTC',
@@ -66,6 +67,7 @@ const sendRequest = async () => {
     try {
         for (let i = 0; i < orders.length; i++) {
             await request(peer, CONSTANTS.CREATE_ORDER_REQUEST, orders[i], { timeout: 100000 })
+            await sleep(1000)
         }
         process.exit(0);
     } catch(err: any) {
@@ -81,3 +83,7 @@ const sendRequest = async () => {
 
 sendRequest()
 
+
+export const sleep = async (ms: number) => {
+    return new Promise(resolve => setTimeout(resolve, ms))
+}

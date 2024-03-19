@@ -1,4 +1,5 @@
 
+import type { IOrder } from 'common';
 import { orderBook } from './order';
 import { handleMatch, isMatchingOrders } from './order-matcher';
 
@@ -7,8 +8,8 @@ const scannableListOfStatus: Array<string>  = [OrderStatus.OPEN, OrderStatus.PAR
 const scanner = () => {
 
     for (const [assetSymbol, assetOrders] of Object.entries(orderBook)) {
-        const buyOrders = assetOrders.BUY;
-        const sellOrders = assetOrders.SELL;
+        const buyOrders = assetOrders.BUY as Array<IOrder>;
+        const sellOrders = assetOrders.SELL as Array<IOrder>;
 
         let buyIndex = 0;
         let sellIndex = sellOrders.length - 1;

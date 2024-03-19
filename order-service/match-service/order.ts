@@ -1,11 +1,13 @@
 import { publisher } from "../pubsub/publisher/bootup"
 
-const {IOrder, CONSTANTS} = require('common')
+import {CONSTANTS, OrderType} from 'common'
+
+import type {IOrder} from 'common'
 
 export interface IOrderBook {
     [assetSymbol: string]: {
-        BUY: typeof IOrder[], // Sorted ascending by price
-        SELL:typeof IOrder[], // Sorted descending by price
+        BUY: IOrder[], // Sorted ascending by price
+        SELL:IOrder[], // Sorted descending by price
     }
 }
 
@@ -36,7 +38,7 @@ export const registerOrder = (order: any) => {
         }
     }
 
-    if (type === 'BUY') {
+    if (type === OrderType.BUY) {
         orderBook[asset].BUY.push(order);
         sortOrdersByPrice(orderBook[asset].BUY);
     } else {
@@ -55,7 +57,7 @@ export const registerOrder = (order: any) => {
 
 }
 
-function sortOrdersByPrice(orders: any[], ascending: boolean = true) {
+export function sortOrdersByPrice(orders: IOrder[], ascending: boolean = true) {
     orders.sort((a, b) => {
         if (ascending) {
             return a.price - b.price; 

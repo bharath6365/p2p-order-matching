@@ -1,7 +1,7 @@
 import Link  from 'grenache-nodejs-link'
 import { PeerRPCServer, PeerPub } from 'grenache-nodejs-ws'
 
-export let SERVICE_PORT;
+export let SERVICE_PORT: number | undefined;
 export const bootup = () => {
     const link = new Link({
         grape: 'http://127.0.0.1:30001'
@@ -19,7 +19,7 @@ export const bootup = () => {
 
 }
 
-function getRandomNumber(low, high) {
+function getRandomNumber(low: number, high: number) {
     return Math.floor(Math.random() * (high - low) + low)
 }
 

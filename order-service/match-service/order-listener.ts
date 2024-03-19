@@ -1,4 +1,6 @@
-import { orderBook } from "./order";
+import { OrderStatus, type IOrder } from "common";
+import { orderBook, sortOrdersByPrice } from "./order";
+const {OrderType} = require('common');
 
 export const orderCreateListener = (order: any, asset: string) => {
     const {type} = order;
@@ -12,7 +14,7 @@ export const orderCreateListener = (order: any, asset: string) => {
     }
 
     // Check if it's an existing order. Additional layer of safety.
-    const existingOrder = orderBook[asset][type].find((existingOrder: any) => existingOrder.id === order.id);
+    const existingOrder = orderBook[asset][type].find((existingOrder: IOrder) => existingOrder.id === order.id);
     if (existingOrder) {
        return;
     }
@@ -20,7 +22,7 @@ export const orderCreateListener = (order: any, asset: string) => {
   
   
     orderBook[asset][type].push(order);
-    sortOrdersByPrice(orderBook[asset][type]);
+    sortOrdersByPrice(orderBook[asset][type], type === OrderType.BUY);
 
 }
 
@@ -37,8 +39,8 @@ export const orderMatchListener = (buyOrder: any, sellOrder: any, asset: string)
       const buyOrders = orderBook[asset].BUY;
       const sellOrders = orderBook[asset].SELL; 
   
-      const buyOrderIndex = buyOrders.findIndex((order: any) => order.id === buyOrder.id);
-      const sellOrderIndex = sellOrders.findIndex((order: any) => order.id === sellOrder.id);
+      const buyOrderIndex = buyOrders.findIndex((order: IOrder) => order.id === buyOrder.id);
+      const sellOrderIndex = sellOrders.findIndex((order: IOrder) => order.id === sellOrder.id);
 
     // Validation
     if (buyOrderIndex === -1 || sellOrderIndex === -1) { 
@@ -51,8 +53,8 @@ export const orderMatchListener = (buyOrder: any, sellOrder: any, asset: string)
     // If the new order and old order, differ by more than 1 version, some update is missed. Handles double spending.
     // TODO: Figure out a  better way to correct these orders. No time to think of this usecase.
     if (buyOrder.version - oldBuyOrder.version > 1 || sellOrder.version - oldSellOrder.version > 1) {
-        oldBuyOrder.status = 'OUT_OF_SYNC';
-        oldSellOrder.status = 'OUT_OF_SYNC';
+        oldBuyOrder.status = OrderStatus.OUT_OF_SYNC;
+        oldSellOrder.status = OrderStatus.OUT_OF_SYNC;
 
         orderBook[asset].BUY[buyOrderIndex] = oldBuyOrder;
         orderBook[asset].SELL[sellOrderIndex] = oldSellOrder;
@@ -64,6 +66,7 @@ export const orderMatchListener = (buyOrder: any, sellOrder: any, asset: string)
     orderBook[asset].BUY[buyOrderIndex] = buyOrder;
     orderBook[asset].SELL[sellOrderIndex] = sellOrder;
 
-      
   }
+
+
 

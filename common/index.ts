@@ -1,11 +1,4 @@
 // Export constants
-const {CONSTANTS} = require('./constants/constants')
+export * from './constants/constants'
+export * from './interfaces/Order'
 
-const {IOrder, OrderStatus, OrderType} = require('./interfaces/Order')
-
-module.exports = {
-   CONSTANTS,
-    IOrder,
-    OrderStatus,
-    OrderType,
-}

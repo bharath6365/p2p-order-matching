@@ -2,9 +2,10 @@
 
 import { publisher } from '../pubsub/publisher/bootup';
 import { SERVICE_PORT } from '../server/bootup';
+import type { IOrderBook } from './order';
 import { executeOrder } from './order-executor'
 
-const {OrderStatus, CONSTANTS} = require('common');
+import {OrderStatus, CONSTANTS, OrderMatchType, type IOrder}  from 'common';
 export const isMatchingOrders = (buyOrder: any, sellOrder: any): boolean => {
    return (
     buyOrder.price >= sellOrder.price &&
@@ -13,7 +14,7 @@ export const isMatchingOrders = (buyOrder: any, sellOrder: any): boolean => {
    )
 }
 
-export const handleMatch = (orderBook: any, asset: string, buyOrder: any, sellOrder: any, buyOrders: any[], sellOrders: any[], buyIndex: number, sellIndex: number) => {
+export const handleMatch = (orderBook: IOrderBook, asset: string, buyOrder: IOrder, sellOrder: IOrder, buyOrders: IOrder[], sellOrders: IOrder[], buyIndex: number, sellIndex: number) => {
     
    // Handling full match.
    const buyOrderQuantity = buyOrder.quantity;
@@ -30,7 +31,7 @@ export const handleMatch = (orderBook: any, asset: string, buyOrder: any, sellOr
     executeOrder(buyOrder, sellOrder);
 }
 
-const handleFullMatch = (orderBook: any, asset: string, buyOrder: any, sellOrder: any, buyOrders: any[], sellOrders: any[], buyIndex: number, sellIndex: number) => {
+const handleFullMatch = (orderBook: IOrderBook, asset: string, buyOrder: IOrder, sellOrder: IOrder, buyOrders: IOrder[], sellOrders: IOrder[], buyIndex: number, sellIndex: number) => {
     buyOrder.status = OrderStatus.MATCHED;
     buyOrder.version++;
     buyOrder.updatedOn = new Date();
@@ -48,7 +49,7 @@ const handleFullMatch = (orderBook: any, asset: string, buyOrder: any, sellOrder
 
     // Pub, sub.
     const event = {
-        type: CONSTANTS.ORDER_FULL_MATCH_EVENT,
+        type: OrderMatchType.ORDER_FULL_MATCH_EVENT,
         orderData: {
             buyOrder,
             sellOrder,
@@ -59,7 +60,7 @@ const handleFullMatch = (orderBook: any, asset: string, buyOrder: any, sellOrder
     publisher.publish(CONSTANTS.ORDER_UPDATED, JSON.stringify(event));
 }
 
-const handlePartialMatchWithExcessBuy = (orderBook: any, asset: string, buyOrder: any, sellOrder: any, buyOrders: any[], sellOrders: any[], buyIndex: number, sellIndex: number) => {
+const handlePartialMatchWithExcessBuy = (orderBook: IOrderBook, asset: string, buyOrder: IOrder, sellOrder: IOrder, buyOrders: IOrder[], sellOrders: IOrder[], buyIndex: number, sellIndex: number) => {
     // 1. Fulfill the sell order completely
     sellOrder.status = OrderStatus.MATCHED;
     sellOrder.version++;
@@ -79,7 +80,7 @@ const handlePartialMatchWithExcessBuy = (orderBook: any, asset: string, buyOrder
 
     // Pub sub.
     const event = {
-        type: CONSTANTS.ORDER_EXCESS_BUYER_MATCH_EVENT,
+        type: OrderMatchType.ORDER_EXCESS_BUYER_MATCH_EVENT,
         orderData: {
             buyOrder,
             sellOrder,
@@ -90,7 +91,7 @@ const handlePartialMatchWithExcessBuy = (orderBook: any, asset: string, buyOrder
     publisher.publish(CONSTANTS.ORDER_UPDATED, JSON.stringify(event));
 };
 
-const handlePartialMatchWithExcessSell = (orderBook: any, asset: string, buyOrder: any, sellOrder: any, buyOrders: any[], sellOrders: any[], buyIndex: number, sellIndex: number) => {
+const handlePartialMatchWithExcessSell = (orderBook: IOrderBook, asset: string, buyOrder: IOrder, sellOrder: IOrder, buyOrders: IOrder[], sellOrders: IOrder[], buyIndex: number, sellIndex: number) => {
     // 1. Fulfill the buy order completely
     buyOrder.status = OrderStatus.MATCHED;
     buyOrder.version++;
@@ -110,7 +111,7 @@ const handlePartialMatchWithExcessSell = (orderBook: any, asset: string, buyOrde
 
     // Pub sub.
     const event = {
-        type: CONSTANTS.ORDER_EXCESS_SELLER_MATCH_EVENT,
+        type: OrderMatchType.ORDER_EXCESS_SELLER_MATCH_EVENT,
         orderData: {
             buyOrder,
             sellOrder,

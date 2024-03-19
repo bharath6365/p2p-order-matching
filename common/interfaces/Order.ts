@@ -5,12 +5,12 @@ export interface IOrder {
     quantity: number;
     userId: string;
     
-    id?: string; 
-    createdOn?: Date; 
-    updatedOn?: Date;
-    version?: number;
-    status?: OrderStatus 
-    matchedWith?: Array<string>;
+    id: string; 
+    createdOn: Date; 
+    updatedOn: Date;
+    version: number;
+    status: OrderStatus 
+    matchedWith: Array<string>;
 }
 
 export enum OrderStatus {
