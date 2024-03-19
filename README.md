@@ -23,13 +23,28 @@ RPC (Remote Procedure Calls): Facilitates direct requests between peers (e.g., a
 Pub/Sub (Publish/Subscribe): Enables broadcasting of order matching events and order book updates for real-time synchronization across the network.
 Grape: A discovery and announcement layer built on top of Grenache, implementing Kademlia-like principles for peer discovery and distributed routing.
 
-Usage [Provide instructions on setting up dependencies, starting the services, and key interactions here]
 
-Architecture Diagram [Consider including a visual diagram of the components and their interactions]
 
-Benefits of a P2P Approach
+  +-------------------+          +----------------------+ 
+|   Client Node     |  RPC     |   Match-Service Node |
++-------------------+  ----->  +----------------------+
+   * Order Creation          * Order Book
+   * RPC Requests            * Matching Logic
+   * (Optional) Pub/Sub      * Pub/Sub Broadcasts 
+                             
+               +----------------------+       
+               |   Match-Service Node |     
+               +----------------------+       
+                   ... (More Match-Service Nodes)
 
-Resilience: The decentralized nature makes the system less susceptible to single points of failure.
-Scalability: The load is distributed across multiple peers, allowing for better handling of increased volume.
-Reduced Latency: Direct peer-to-peer communication can potentially decrease order matching and update propagation times.
-Potential for Censorship Resistance: Depending on the implementation, the lack of a central authority can provide greater control for users.
+               <----->  Grape Network (Kademlia-like) 
+                         * Peer Discovery
+                         * Routing 
+
+
+### Benefits of a P2P Approach
+
+- Resilience: The decentralized nature makes the system less susceptible to single points of failure.
+- Scalability: The load is distributed across multiple peers, allowing for better handling of increased volume.
+- Reduced Latency: Direct peer-to-peer communication can potentially decrease order matching and update propagation times.
+-  Potential for Censorship Resistance: Depending on the implementation, the lack of a central authority can provide greater control for users.
