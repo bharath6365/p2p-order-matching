@@ -25,21 +25,7 @@ Grape: A discovery and announcement layer built on top of Grenache, implementing
 
 
 
-  +-------------------+          +----------------------+ 
-|   Client Node     |  RPC     |   Match-Service Node |
-+-------------------+  ----->  +----------------------+
-   * Order Creation          * Order Book
-   * RPC Requests            * Matching Logic
-   * (Optional) Pub/Sub      * Pub/Sub Broadcasts 
-                             
-               +----------------------+       
-               |   Match-Service Node |     
-               +----------------------+       
-                   ... (More Match-Service Nodes)
-
-               <----->  Grape Network (Kademlia-like) 
-                         * Peer Discovery
-                         * Routing 
+ ![Alt text](architecture.png)
 
 
 ### Benefits of a P2P Approach
