@@ -25,7 +25,7 @@ Grape: A discovery and announcement layer built on top of Grenache, implementing
 
 
 
- ![Alt text](architecture.png)
+ ![Alt text](docs/architecture.png)
 
 
 ### Benefits of a P2P Approach
@@ -34,3 +34,17 @@ Grape: A discovery and announcement layer built on top of Grenache, implementing
 - Scalability: The load is distributed across multiple peers, allowing for better handling of increased volume.
 - Reduced Latency: Direct peer-to-peer communication can potentially decrease order matching and update propagation times.
 -  Potential for Censorship Resistance: Depending on the implementation, the lack of a central authority can provide greater control for users.
+
+### Architecture
+![Alt Text] (docs/p2p-order-matching-architecture.png)
+The flow starts with the client querying for the order handling node through the Grenache library, which in turn communicates with the Kademlia DHT to find the appropriate node. Once the node IP is returned to the client, an RPC request is made directly to the node to process the order, and the node sends back an acknowledgment or response to the client.
+
+### Heartbeat
+![Alt Text] (docs/p2p-order-matching-heartbeat.png)
+The order matching service periodically sends heartbeats to Kademlia, to announce it's active and processing orders.
+
+### MultiRepo
+There are 3 repos.
+Client -> This could be your express server accepting requests from frontend
+Common -> Having utils, interfaces etc
+Order Service -> Microservice talking to Kademlia.
